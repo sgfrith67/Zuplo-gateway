@@ -1,0 +1,48 @@
+{
+  "policies": [
+    {
+      "name": "mcp-query-param-to-header-inbound",
+      "policyType": "query-param-to-header-inbound",
+      "handler": {
+        "export": "QueryParamToHeaderInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "queryParam": "apiKey",
+          "headerName": "Authorization",
+          "headerValue": "Bearer {value}",
+          "removeFromUrl": true
+        }
+      }
+    },
+    {
+      "name": "monetization-inbound",
+      "policyType": "monetization-inbound",
+      "handler": {
+        "export": "MonetizationInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "cacheTtlSeconds": 60,
+          "meters": {
+            "mcp_requests": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "prefect-upstream-api-key",
+      "policyType": "set-headers-inbound",
+      "handler": {
+        "export": "SetHeadersInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer $env(PREFECT_MCP_API_KEY)"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

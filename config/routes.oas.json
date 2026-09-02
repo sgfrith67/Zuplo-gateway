@@ -1,0 +1,69 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "InvestAir Data API",
+    "description": "Subscriber access to InvestAir's proprietary ASX market intelligence via the Model Context Protocol. Connect any MCP-compatible AI client and query cash runway, capital raises, substantial holders, announcements and peer analysis in natural language."
+  },
+  "servers": [
+    {
+      "url": "https://investair-test-main-56df165.d2.zuplo.dev",
+      "description": "Development"
+    }
+  ],
+  "paths": {
+    "/mcp/prefect-v1": {
+      "get,post": {
+        "operationId": "prefect-mcp-server",
+        "tags": ["MCP"],
+        "summary": "InvestAir Data",
+        "description": "The InvestAir MCP endpoint. Add this server to Claude, ChatGPT, Cursor or any MCP-compatible client using the instructions below, appending `?apiKey=` and your subscription key to the URL.",
+        "x-mcp-server": {
+          "name": "investair",
+          "version": "1.0.0",
+          "tools": [
+            { "name": "screen_cashflow", "description": "Screen ASX companies by cash runway" },
+            { "name": "get_cashflow_snapshot", "description": "Cash and runway snapshot for one ASX code" },
+            { "name": "screen_funding_risk", "description": "Week-over-week funding risk and raise radar" },
+            { "name": "screen_capital_raises", "description": "Market-wide capital raises screen" },
+            { "name": "list_capital_raises", "description": "Capital raises for one ticker" },
+            { "name": "screen_peer_brokers", "description": "Rank brokers across a peer set for a raise" },
+            { "name": "get_peers", "description": "Ranked peer companies for one ticker" },
+            { "name": "get_substantial_holders", "description": "Substantial holders for one ticker" },
+            { "name": "list_announcements", "description": "Recent ASX announcements" },
+            { "name": "get_announcement", "description": "Full detail for one announcement" },
+            { "name": "get_market_snapshot", "description": "Latest end-of-day market facts for one ticker" },
+            { "name": "get_company_projects", "description": "Mining project book for one ticker" },
+            { "name": "resolve_company", "description": "Resolve an ASX ticker or company name" },
+            { "name": "list_listing_events", "description": "Recent delistings and ticker renames" },
+            { "name": "run_readonly_sql", "description": "Governed read-only SQL for ad-hoc analysis" }
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "MCP response"
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "McpProxyHandler",
+            "module": "$import(@zuplo/runtime/mcp-gateway)",
+            "options": {
+              "rewritePattern": "${env.PREFECT_MCP_URL}",
+              "forwardSearch": true,
+              "followRedirects": false
+            }
+          },
+          "policies": {
+            "inbound": [
+              "mcp-query-param-to-header-inbound",
+              "monetization-inbound",
+              "prefect-upstream-api-key"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
