@@ -8,8 +8,9 @@ import { CodeTabs, CodeTabPanel } from "zudoku/ui/CodeTabs";
 
 // The production MCP Gateway endpoint. Update this if the custom domain
 // or route path changes.
-const MCP_URL =
-  "https://investair-test-main-28c3f39.zuplo.app/mcp/prefect-v1";
+const MCP_URL = "https://mcp.investair.com.au/mcp/prefect-v1";
+
+const MARKETPLACE_REPO = "Investair-com-au/investair-claude-marketplace";
 
 const styles = {
   page: {
@@ -54,8 +55,9 @@ export const ConnectPage = () => {
   const [apiKey, setApiKey] = useState("");
 
   const hasKey = apiKey.trim().length > 0;
-  const keyValue = hasKey ? apiKey.trim() : "YOUR_API_KEY";
-  const headerValue = `Bearer ${keyValue}`;
+  const urlWithKey = hasKey
+    ? `${MCP_URL}?apiKey=${encodeURIComponent(apiKey.trim())}`
+    : `${MCP_URL}?apiKey=YOUR_API_KEY`;
 
   return (
     <section style={styles.page}>
@@ -65,9 +67,10 @@ export const ConnectPage = () => {
 
       <h1 style={styles.heading}>Connect to Investair Insights</h1>
       <p style={styles.lead}>
-        Paste your subscription API key below, then follow the three steps to
-        add Investair to Claude. No files to edit and nothing to install — it
-        all happens in Claude&rsquo;s settings screen.
+        Paste your subscription API key below to generate your personal
+        connection URL, then follow the three steps to add Investair to Claude.
+        No files to edit and nothing to install — it all happens in
+        Claude&rsquo;s settings screen.
       </p>
 
       {isPending ? null : !isAuthenticated ? (
@@ -102,70 +105,80 @@ export const ConnectPage = () => {
 
       {!hasKey && (
         <Callout type="caution" title="No key yet?">
-          The values below use a placeholder until you paste your real key.
-          Never share your API key or post it anywhere public.
+          The connection URL below uses a placeholder until you paste your real
+          key. Never share your API key or post it anywhere public.
         </Callout>
       )}
 
       <div style={styles.section}>
         <h2 style={styles.heading}>
-          Step 1 &mdash; Open the connector settings in Claude
+          Step 1 &mdash; Add the Investair marketplace in Claude
         </h2>
-        <ol style={styles.steps}>
-          <li>
-            On a Free, Pro or Max plan: open{" "}
-            <strong>Settings &rarr; Connectors</strong>, then click{" "}
-            <strong>Add custom connector</strong>.
-          </li>
-          <li>
-            On a Team or Enterprise plan: an owner or admin opens{" "}
-            <strong>
-              Organization settings &rarr; Connectors &rarr; Add &rarr; Custom
-            </strong>
-            .
-          </li>
-        </ol>
-      </div>
-
-      <div style={styles.section}>
-        <h2 style={styles.heading}>Step 2 &mdash; Paste the server URL</h2>
         <p style={styles.paragraph}>
-          Give the connector a name such as <strong>Investair</strong>, then
-          paste this as the remote MCP server URL. Your key does{" "}
-          <em>not</em> go in the URL.
+          This installs the Investair plugin, which provides the connector you
+          will configure in Step 3.
         </p>
-        <div style={styles.codeBlock}>
-          <CodeTabs>
-            <CodeTabPanel language="text" title="Server URL" code={MCP_URL} />
-          </CodeTabs>
-        </div>
-      </div>
-
-      <div style={styles.section}>
-        <h2 style={styles.heading}>Step 3 &mdash; Add your key as a header</h2>
         <ol style={styles.steps}>
           <li>
-            Set <strong>Authentication</strong> to <strong>None</strong>.
+            In Claude, open <strong>Settings &rarr; Plugins</strong>.
           </li>
           <li>
-            Open <strong>Request headers</strong> and add one header.
+            Click <strong>Add a marketplace</strong>, then choose{" "}
+            <strong>Add from a repository</strong>.
           </li>
           <li>
-            Choose <strong>authorization</strong> as the header name, and paste
-            this as the value:
+            Enter this repository:
             <div style={styles.codeBlock}>
               <CodeTabs>
                 <CodeTabPanel
                   language="text"
-                  title="Header value"
-                  code={headerValue}
+                  title="Repository"
+                  code={MARKETPLACE_REPO}
                 />
               </CodeTabs>
             </div>
           </li>
           <li>
-            Click <strong>Add</strong> to save the connector.
+            Leave <strong>Sync</strong> enabled, then click{" "}
+            <strong>Sync</strong>.
           </li>
+          <li>
+            Install the <strong>Investair</strong> plugin from the marketplace
+            listing.
+          </li>
+        </ol>
+      </div>
+
+      <div style={styles.section}>
+        <h2 style={styles.heading}>Step 2 &mdash; Copy your connection URL</h2>
+        <p style={styles.paragraph}>
+          This single string contains both the Investair endpoint and your API
+          key. Copy it now &mdash; you&rsquo;ll paste it in the next step.
+        </p>
+        <div style={styles.codeBlock}>
+          <CodeTabs>
+            <CodeTabPanel
+              language="text"
+              title="Connection URL"
+              code={urlWithKey}
+            />
+          </CodeTabs>
+        </div>
+      </div>
+
+      <div style={styles.section}>
+        <h2 style={styles.heading}>
+          Step 3 &mdash; Open the connector and paste your URL
+        </h2>
+        <ol style={styles.steps}>
+          <li>
+            Go to the <strong>Connectors</strong> menu.
+          </li>
+          <li>
+            Open the <strong>Investair_data</strong> connector installed by the
+            plugin.
+          </li>
+          <li>Paste the connection URL you copied in Step 2, then save.</li>
         </ol>
       </div>
 
@@ -182,8 +195,8 @@ export const ConnectPage = () => {
           <strong>one shared key for everyone</strong> in the organisation.
           Claude stores it securely and never shows it again, but usage is not
           separated per person. If each person needs their own key, have them
-          add the connector individually under their own{" "}
-          <strong>Settings &rarr; Connectors</strong>.
+          add the marketplace and connector individually under their own{" "}
+          <strong>Settings &rarr; Plugins</strong>.
         </Callout>
       </div>
     </section>
