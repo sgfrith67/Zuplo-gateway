@@ -1,0 +1,79 @@
+---
+title: InvestAir Data
+description: Proprietary ASX market intelligence for AI assistants, via the Model Context Protocol.
+sidebar_label: Introduction
+sidebar_icon: sparkles
+---
+
+# InvestAir Data
+
+InvestAir gives your AI assistant direct access to proprietary ASX market intelligence —
+cash runway, capital raises, substantial holders, broker activity, announcements and peer
+analysis — through the [Model Context Protocol](https://modelcontextprotocol.io).
+
+Ask questions in plain English. Your assistant calls the right tool, and answers are grounded
+in InvestAir's data rather than the model's training set.
+
+> *"Which ASX companies have between 2 and 3 quarters of cash runway?"*
+>
+> *"Show me capital raises in the gold sector over the last month."*
+>
+> *"Who are the substantial holders in this company, and which brokers do its peers use?"*
+
+## Getting started
+
+<Stepper>
+
+1. **Subscribe**
+
+   Choose a plan on the [Pricing](/pricing) page. You'll get an API key immediately —
+   no credit card required during the trial.
+
+1. **Connect your AI client**
+
+   Open the [API Reference](/api) and find the **InvestAir Data** endpoint. It shows your
+   MCP connection URL along with copy-paste setup instructions for Claude, ChatGPT, Cursor
+   and VS Code.
+
+   Your connection URL is the endpoint plus your key:
+
+   ```
+   https://investair-test-main-56df165.d2.zuplo.dev/mcp/prefect-v1?apiKey=YOUR_API_KEY
+   ```
+
+1. **Start asking questions**
+
+   Once connected, the InvestAir tools appear in your assistant. Ask a question and it will
+   pick the right one automatically.
+
+</Stepper>
+
+## What you can ask
+
+| Area | Example question |
+| --- | --- |
+| **Cash & runway** | "What's the adjusted runway for this company?" |
+| **Funding risk** | "Run the weekly raise radar." |
+| **Capital raises** | "Recent raises across the market, by sector." |
+| **Brokers** | "Best brokers for a raise, based on this company's peers." |
+| **Ownership** | "Substantial holders in the last 12 months." |
+| **Announcements** | "Summarise this company's recent ASX announcements." |
+| **Peers & projects** | "Who are its closest peers, and what projects does it hold?" |
+| **Market data** | "Latest end-of-day figures for these tickers." |
+
+## Usage and limits
+
+Your plan includes a monthly allowance of MCP requests. Track usage any time from your
+subscription page — each tool call your assistant makes counts as one request.
+
+:::tip{title="Keep your key private"}
+
+Your API key sits in the connection URL, so treat that whole URL as a secret. If it's ever
+exposed, contact us and we'll issue a replacement.
+
+:::
+
+## Need help?
+
+Questions about coverage, methodology, or enterprise access — get in touch and we'll help you
+get the most out of the data.
