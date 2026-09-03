@@ -1,5 +1,6 @@
 import { zuploMonetizationPlugin } from "@zuplo/zudoku-plugin-monetization";
 import type { ZudokuConfig } from "zudoku";
+import { ConnectPage } from "./src/ConnectPage";
 
 /**
  * Developer Portal Configuration
@@ -8,17 +9,17 @@ import type { ZudokuConfig } from "zudoku";
  */
 const config: ZudokuConfig = {
   site: {
-    title: "InvestAir Data",
+    title: "Investair Insights",
     banner: {
-      message: "InvestAir Data is in early access — free during the trial period.",
+      message: "Investair Insights is in early access — free during the trial period.",
       color: "info",
       dismissible: true,
     },
   },
   metadata: {
-    title: "InvestAir Data — ASX market intelligence for AI assistants",
+    title: "Investair Insights — ASX market intelligence for AI assistants",
     description:
-      "Connect Claude, ChatGPT or Cursor to InvestAir's proprietary ASX data: cash runway, capital raises, substantial holders, announcements and peer analysis.",
+      "Connect Claude, ChatGPT or Cursor to Investair's proprietary ASX data: cash runway, capital raises, substantial holders, announcements and peer analysis.",
   },
   navigation: [
     {
@@ -40,9 +41,11 @@ const config: ZudokuConfig = {
       ],
     },
     {
-      type: "link",
-      to: "/api",
-      label: "API Reference",
+      type: "custom-page",
+      path: "/connect",
+      label: "Connect",
+      icon: "plug",
+      element: <ConnectPage />,
     },
   ],
   redirects: [{ from: "/", to: "/introduction" }],
@@ -65,6 +68,7 @@ const config: ZudokuConfig = {
   apiKeys: {
     enabled: true,
   },
+  protectedRoutes: ["/connect"],
   theme: {
     light: {
       primary: "#0b5c8a",
