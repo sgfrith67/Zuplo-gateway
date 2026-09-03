@@ -59,6 +59,7 @@ const config: ZudokuConfig = {
   authentication: {
     type: "clerk",
     clerkPubKey: "pk_live_Y2xlcmsuaW52ZXN0YWlyLmNvbS5hdSQ",
+    jwtTemplateName: "dev-portal",
   },
   apiKeys: {
     enabled: true,
