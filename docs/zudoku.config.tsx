@@ -1,5 +1,6 @@
 import { zuploMonetizationPlugin } from "@zuplo/zudoku-plugin-monetization";
 import type { ZudokuConfig } from "zudoku";
+import { ConnectPage } from "./src/ConnectPage";
 
 /**
  * Developer Portal Configuration
@@ -44,6 +45,13 @@ const config: ZudokuConfig = {
       to: "/api",
       label: "API Reference",
     },
+    {
+      type: "custom-page",
+      path: "/connect",
+      label: "Connect",
+      icon: "plug",
+      element: <ConnectPage />,
+    },
   ],
   redirects: [{ from: "/", to: "/introduction" }],
   apis: [
@@ -65,6 +73,7 @@ const config: ZudokuConfig = {
   apiKeys: {
     enabled: true,
   },
+  protectedRoutes: ["/connect"],
   theme: {
     light: {
       primary: "#0b5c8a",
