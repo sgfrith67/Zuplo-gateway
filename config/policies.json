@@ -37,7 +37,7 @@
         "export": "McpClerkOAuthInboundPolicy",
         "module": "$import(@zuplo/runtime)",
         "options": {
-          "frontendApiUrl": "https://verb-noun-00.clerk.accounts.dev",
+          "frontendApiUrl": "https://clerk.investair.com.au",
           "clientId": "$env(CLERK_CLIENT_ID)",
           "clientSecret": "$env(CLERK_CLIENT_SECRET)"
         }
