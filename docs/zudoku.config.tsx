@@ -8,14 +8,14 @@ import { ConnectPage } from "./src/ConnectPage";
  * https://zuplo.com/docs/dev-portal/zudoku/configuration/overview
  */
 
-// Clerk uses separate publishable keys per instance (live vs. development),
-// and live keys only work on their configured production domain. Production
-// gets the pk_live_ key; Preview and Working Copy get a pk_test_ key from a
-// Clerk development instance so sign-in works on *.zuplo.site / *.zuplo.dev
-// preview URLs. Configure ZUDOKU_PUBLIC_CLERK_PUB_KEY per environment in
-// Project Settings → Environment Variables.
-// (rebuild trigger: retry after env var re-save)
-const clerkPubKey = import.meta.env.ZUDOKU_PUBLIC_CLERK_PUB_KEY?.trim();
+// TEMPORARY WORKAROUND: ZUDOKU_PUBLIC_CLERK_PUB_KEY (config var, targeted at
+// production) is not being injected into the dev-portal build environment on
+// this project — confirmed as a platform-side issue (raised with Zuplo
+// support, ref build 8a747d98-3664-4093-95eb-9533fec491e5). The identical
+// value works when hardcoded here, so we're doing that temporarily to unblock
+// production. REVERT to `import.meta.env.ZUDOKU_PUBLIC_CLERK_PUB_KEY?.trim()`
+// once support confirms the env var injection is fixed.
+const clerkPubKey = "pk_live_Y2xlcmsuaW52ZXN0YWlyLmNvbS5hdSQ";
 
 const config: ZudokuConfig = {
   site: {
