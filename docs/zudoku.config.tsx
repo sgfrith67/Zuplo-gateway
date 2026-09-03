@@ -14,6 +14,7 @@ import { ConnectPage } from "./src/ConnectPage";
 // Clerk development instance so sign-in works on *.zuplo.site / *.zuplo.dev
 // preview URLs. Configure ZUDOKU_PUBLIC_CLERK_PUB_KEY per environment in
 // Project Settings → Environment Variables.
+// (rebuild trigger: retry after env var re-save)
 const clerkPubKey = import.meta.env.ZUDOKU_PUBLIC_CLERK_PUB_KEY?.trim();
 
 const config: ZudokuConfig = {
