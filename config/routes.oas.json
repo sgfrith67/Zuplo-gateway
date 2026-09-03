@@ -16,8 +16,8 @@
       "get,post": {
         "operationId": "prefect-mcp-server",
         "tags": ["MCP"],
-        "summary": "InvestAir Data",
-        "description": "The InvestAir MCP endpoint. Add this server to Claude, ChatGPT, Cursor or any MCP-compatible client, authenticating with your subscription key in the `authorization` request header as `Bearer YOUR_API_KEY`. See the Connect page for step-by-step setup instructions.",
+        "summary": "Investair Data",
+        "description": "The InvestAir MCP endpoint. Add this server to Claude, ChatGPT, Cursor or any MCP-compatible client and click Connect — you'll be asked to sign in with your InvestAir account. See the Connect page for step-by-step setup instructions.",
         "x-mcp-server": {
           "name": "investair",
           "version": "1.0.0",
@@ -40,9 +40,7 @@
           ]
         },
         "responses": {
-          "200": {
-            "description": "MCP response"
-          }
+          "200": { "description": "MCP response" }
         },
         "x-zuplo-route": {
           "corsPolicy": "none",
@@ -57,8 +55,7 @@
           },
           "policies": {
             "inbound": [
-              "mcp-query-param-to-header-inbound",
-              "monetization-inbound",
+              "clerk-managed-oauth",
               "prefect-upstream-api-key"
             ]
           }

@@ -15,20 +15,6 @@
       }
     },
     {
-      "name": "monetization-inbound",
-      "policyType": "monetization-inbound",
-      "handler": {
-        "export": "MonetizationInboundPolicy",
-        "module": "$import(@zuplo/runtime)",
-        "options": {
-          "cacheTtlSeconds": 60,
-          "meters": {
-            "mcp_requests": 1
-          }
-        }
-      }
-    },
-    {
       "name": "prefect-upstream-api-key",
       "policyType": "set-headers-inbound",
       "handler": {
@@ -41,6 +27,19 @@
               "value": "Bearer $env(PREFECT_MCP_API_KEY)"
             }
           ]
+        }
+      }
+    },
+    {
+      "name": "clerk-managed-oauth",
+      "policyType": "mcp-clerk-oauth-inbound",
+      "handler": {
+        "export": "McpClerkOAuthInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "frontendApiUrl": "https://verb-noun-00.clerk.accounts.dev",
+          "clientId": "$env(CLERK_CLIENT_ID)",
+          "clientSecret": "$env(CLERK_CLIENT_SECRET)"
         }
       }
     }
