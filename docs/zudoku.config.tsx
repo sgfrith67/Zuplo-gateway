@@ -7,6 +7,15 @@ import { ConnectPage } from "./src/ConnectPage";
  * For more information, see:
  * https://zuplo.com/docs/dev-portal/zudoku/configuration/overview
  */
+
+// Clerk uses separate publishable keys per instance (live vs. development),
+// and live keys only work on their configured production domain. Production
+// gets the pk_live_ key; Preview and Working Copy get a pk_test_ key from a
+// Clerk development instance so sign-in works on *.zuplo.site / *.zuplo.dev
+// preview URLs. Configure ZUDOKU_PUBLIC_CLERK_PUB_KEY per environment in
+// Project Settings → Environment Variables.
+const clerkPubKey = import.meta.env.ZUDOKU_PUBLIC_CLERK_PUB_KEY;
+
 const config: ZudokuConfig = {
   site: {
     title: "Investair Insights",
@@ -58,7 +67,7 @@ const config: ZudokuConfig = {
   ],
   authentication: {
     type: "clerk",
-    clerkPubKey: "pk_live_Y2xlcmsuaW52ZXN0YWlyLmNvbS5hdSQ",
+    clerkPubKey,
     jwtTemplateName: "dev-portal",
   },
   apiKeys: {
