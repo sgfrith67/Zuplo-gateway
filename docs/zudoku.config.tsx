@@ -57,13 +57,8 @@ const config: ZudokuConfig = {
     },
   ],
   authentication: {
-    // IMPORTANT: This is a demo Auth0 configuration.
-    // Replace with your own identity provider before going to production.
-    // https://zuplo.com/docs/dev-portal/zudoku/configuration/authentication
-    type: "auth0",
-    domain: "auth.zuplo.site",
-    clientId: "f8I87rdsCRo4nU2FHf0fHVwA9P7xi7Ml",
-    audience: "https://api.example.com/",
+    type: "clerk",
+    clerkPubKey: "pk_live_Y2xlcmsuaW52ZXN0YWlyLmNvbS5hdSQ",
   },
   apiKeys: {
     enabled: true,
