@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Head } from "zudoku/components";
 import { useAuth } from "zudoku/hooks";
 import { Callout } from "zudoku/ui/Callout";
-import { Input } from "zudoku/ui/Input";
-import { Label } from "zudoku/ui/Label";
 import { CodeTabs, CodeTabPanel } from "zudoku/ui/CodeTabs";
 
 // The production MCP Gateway endpoint. Update this if the custom domain
@@ -42,12 +39,6 @@ const styles = {
     paddingLeft: "1.25rem",
     lineHeight: 1.75,
   },
-  field: {
-    display: "grid",
-    gap: "0.5rem",
-    maxWidth: "32rem",
-    margin: "2rem 0",
-  },
   codeBlock: {
     margin: "1rem 0 0",
   },
@@ -55,11 +46,6 @@ const styles = {
 
 export const ConnectPage = () => {
   const { isAuthenticated, isPending, profile, login } = useAuth();
-  const [apiKey, setApiKey] = useState("");
-
-  const hasKey = apiKey.trim().length > 0;
-  const keyValue = hasKey ? apiKey.trim() : "YOUR_API_KEY";
-  const headerValue = `Bearer ${keyValue}`;
 
   return (
     <section style={styles.page}>
@@ -69,9 +55,9 @@ export const ConnectPage = () => {
 
       <h1 style={styles.heading}>Connect to Investair Insights</h1>
       <p style={styles.lead}>
-        Paste your subscription API key below, then follow the three steps to
-        add Investair to Claude. No files to edit and nothing to install — it
-        all happens in Claude&rsquo;s settings screen.
+        Follow the steps below to add Investair to Claude. No files to edit
+        and nothing to install — it all happens in Claude&rsquo;s settings
+        screen.
       </p>
 
       {isPending ? null : !isAuthenticated ? (
@@ -79,35 +65,14 @@ export const ConnectPage = () => {
           <button type="button" onClick={() => login()}>
             Sign in
           </button>{" "}
-          to subscribe to a plan and get your API key, or paste an existing key
-          below.
+          to get started.
         </Callout>
       ) : (
         <Callout
           type="tip"
           title={`Signed in as ${profile?.email ?? profile?.name ?? "you"}`}
         >
-          Find your API key on the <a href="/subscriptions">Subscriptions</a>{" "}
-          page, then paste it below.
-        </Callout>
-      )}
-
-      <div style={styles.field}>
-        <Label htmlFor="apiKey">Your API key</Label>
-        <Input
-          id="apiKey"
-          type="password"
-          placeholder="zpka_..."
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          autoComplete="off"
-        />
-      </div>
-
-      {!hasKey && (
-        <Callout type="caution" title="No key yet?">
-          The values below use a placeholder until you paste your real key.
-          Never share your API key or post it anywhere public.
+          Follow the steps below to connect Claude to Investair Insights.
         </Callout>
       )}
 
@@ -117,7 +82,7 @@ export const ConnectPage = () => {
         </h2>
         <p style={styles.paragraph}>
           This installs the Investair plugin, which provides the tools that use
-          the connector you set up in the next two steps.
+          the connector you set up in the next step.
         </p>
         <ol style={styles.steps}>
           <li>
@@ -156,58 +121,46 @@ export const ConnectPage = () => {
           Open <strong>Settings &rarr; Connectors</strong> and click{" "}
           <strong>Add custom connector</strong>. Name it exactly{" "}
           <strong>{CONNECTOR_NAME}</strong> so the plugin can find it, then
-          paste this as the remote MCP server URL. Your key does <em>not</em> go
-          in the URL.
+          paste this as the remote MCP server URL.
         </p>
         <div style={styles.codeBlock}>
           <CodeTabs>
             <CodeTabPanel language="text" title="Server URL" code={MCP_URL} />
           </CodeTabs>
         </div>
+        <p style={styles.paragraph}>
+          Once you&rsquo;ve pasted the URL, click through and leave the default
+          settings for <strong>Authentication</strong> and{" "}
+          <strong>OAuth Client</strong>, then click <strong>Add</strong>.
+        </p>
       </div>
 
       <div style={styles.section}>
-        <h2 style={styles.heading}>Step 3 &mdash; Add your key as a header</h2>
-        <ol style={styles.steps}>
-          <li>
-            Set <strong>Authentication</strong> to <strong>None</strong>.
-          </li>
-          <li>
-            Open <strong>Request headers</strong> and add one header.
-          </li>
-          <li>
-            Choose <strong>authorization</strong> as the header name, and paste
-            this as the value:
-            <div style={styles.codeBlock}>
-              <CodeTabs>
-                <CodeTabPanel
-                  language="text"
-                  title="Header value"
-                  code={headerValue}
-                />
-              </CodeTabs>
-            </div>
-          </li>
-          <li>
-            Click <strong>Add</strong> to save the connector.
-          </li>
-        </ol>
+        <h2 style={styles.heading}>
+          Step 3 &mdash; Check the connector is ready
+        </h2>
+        <p style={styles.paragraph}>
+          Go back to the <strong>Connectors</strong> menu and open the{" "}
+          <strong>{CONNECTOR_NAME}</strong> connector. Confirm that it shows as{" "}
+          <strong>Connected</strong>, that its tools are listed, and that they
+          are set to <strong>Always Allow</strong>.
+        </p>
       </div>
 
       <div style={styles.section}>
         <Callout type="tip" title="You're connected">
-          The Investair tools now appear in Claude. Ask a question in plain
-          English and Claude will pick the right tool automatically.
+          The Investair tools now appear in Claude. Try asking Claude a
+          question about an ASX small-cap stock and watch it pull real data
+          from Investair.
         </Callout>
       </div>
 
       <div style={styles.section}>
         <Callout type="caution" title="Adding this for a team?">
           A connector added under Organization settings uses{" "}
-          <strong>one shared key for everyone</strong> in the organisation.
-          Claude stores it securely and never shows it again, but usage is not
-          separated per person. If each person needs their own key, have them
-          add the marketplace and connector individually under their own{" "}
+          <strong>one shared connection for everyone</strong> in the
+          organisation. If each person needs their own access, have them add
+          the marketplace and connector individually under their own{" "}
           <strong>Settings &rarr; Connectors</strong>.
         </Callout>
       </div>
