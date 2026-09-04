@@ -1,5 +1,5 @@
 import { zuploMonetizationPlugin } from "@zuplo/zudoku-plugin-monetization";
-import type { ZudokuConfig } from "zudoku";
+import type { ZudokuConfig, ZudokuPlugin } from "zudoku";
 import { ConnectPage } from "./src/ConnectPage";
 
 /**
@@ -15,7 +15,39 @@ import { ConnectPage } from "./src/ConnectPage";
 // value works when hardcoded here, so we're doing that temporarily to unblock
 // production. REVERT to `import.meta.env.ZUDOKU_PUBLIC_CLERK_PUB_KEY?.trim()`
 // once support confirms the env var injection is fixed.
+//
+// NOTE: this is a Clerk *live* key, which Clerk restricts to the
+// investair.com.au domain. Preview and working-copy portals served from
+// *.zuplo.site will therefore fail to initialise Clerk ("Production Keys are
+// only allowed for domain investair.com.au"). Authenticated pages such as
+// Pricing and Connect can only be exercised on insights.investair.com.au.
 const clerkPubKey = "pk_live_Y2xlcmsuaW52ZXN0YWlyLmNvbS5hdSQ";
+
+// The monetization plugin adds a "Pricing" entry to the profile menu (the
+// dropdown next to the signed-in user's name). Pricing already has its own tab
+// in the main navigation, so strip that duplicate menu item out of the plugin
+// while leaving all of its other behaviour untouched.
+const withoutPricingProfileMenuItem = (plugin: ZudokuPlugin): ZudokuPlugin => {
+  const getProfileMenuItems = (plugin as any).getProfileMenuItems;
+  if (typeof getProfileMenuItems !== "function") {
+    return plugin;
+  }
+
+  return {
+    ...plugin,
+    getProfileMenuItems: (...args: any[]) => {
+      const items = getProfileMenuItems.apply(plugin, args) ?? [];
+      return items.filter(
+        (item: { label?: string }) =>
+          item?.label?.trim().toLowerCase() !== "pricing",
+      );
+    },
+  } as ZudokuPlugin;
+};
+
+const monetizationPlugins = [zuploMonetizationPlugin()]
+  .flat()
+  .map(withoutPricingProfileMenuItem);
 
 const config: ZudokuConfig = {
   site: {
@@ -34,21 +66,21 @@ const config: ZudokuConfig = {
   navigation: [
     {
       type: "category",
-      label: "Documentation",
+      label: "Getting Started",
+      icon: "sparkles",
+      collapsible: false,
       items: [
         {
-          type: "category",
-          label: "Getting Started",
-          icon: "sparkles",
-          collapsible: false,
-          items: [
-            {
-              type: "doc",
-              file: "introduction",
-            },
-          ],
+          type: "doc",
+          file: "introduction",
         },
       ],
+    },
+    {
+      type: "link",
+      to: "/pricing",
+      label: "Pricing",
+      icon: "credit-card",
     },
     {
       type: "custom-page",
@@ -72,7 +104,7 @@ const config: ZudokuConfig = {
     jwtTemplateName: "dev-portal",
   },
   apiKeys: {
-    enabled: true,
+    enabled: false,
   },
   protectedRoutes: ["/connect"],
   theme: {
@@ -85,7 +117,7 @@ const config: ZudokuConfig = {
       primaryForeground: "#04202f",
     },
   },
-  plugins: [zuploMonetizationPlugin()],
+  plugins: monetizationPlugins,
 };
 
 export default config;
