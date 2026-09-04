@@ -49,6 +49,45 @@ const monetizationPlugins = [zuploMonetizationPlugin()]
   .flat()
   .map(withoutPricingProfileMenuItem);
 
+// We authenticate every request with Clerk-managed OAuth (see
+// config/routes.oas.json) — Zuplo API key consumers are no longer part of the
+// auth flow. `apiKeys: { enabled: false }` (below) removes Zudoku's built-in
+// API Keys page, but the monetization plugin still renders its own "API Keys"
+// block inside each subscription card on /pricing, and it has no config
+// option to suppress that. Since there's nothing left for that key to
+// authenticate, we hide the block client-side: a small observer watches for
+// the subscription card's API Key heading and hides its containing card.
+const hideMonetizationApiKeysPlugin: ZudokuPlugin = {
+  getHead: () => (
+    <script
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{
+        __html: `
+          (function () {
+            var HEADING_TEXT = "api key";
+            function hideApiKeyCards(root) {
+              var candidates = (root || document).querySelectorAll("h1, h2, h3, h4, h5, h6");
+              candidates.forEach(function (heading) {
+                var text = (heading.textContent || "").trim().toLowerCase();
+                if (text !== HEADING_TEXT) return;
+                var card = heading.closest("[class*='card' i]") || heading.parentElement;
+                if (card) {
+                  card.style.display = "none";
+                }
+              });
+            }
+            hideApiKeyCards();
+            var observer = new MutationObserver(function () {
+              hideApiKeyCards();
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+          })();
+        `,
+      }}
+    />
+  ),
+};
+
 const config: ZudokuConfig = {
   site: {
     title: "Investair Insights",
@@ -117,7 +156,7 @@ const config: ZudokuConfig = {
       primaryForeground: "#04202f",
     },
   },
-  plugins: monetizationPlugins,
+  plugins: [...monetizationPlugins, hideMonetizationApiKeysPlugin],
 };
 
 export default config;
