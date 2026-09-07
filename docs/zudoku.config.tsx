@@ -56,7 +56,9 @@ const monetizationPlugins = [zuploMonetizationPlugin()]
 // block inside each subscription card on /pricing, and it has no config
 // option to suppress that. Since there's nothing left for that key to
 // authenticate, we hide the block client-side: a small observer watches for
-// the subscription card's API Key heading and hides its containing card.
+// the subscription card's API Key(s) heading and hides its containing card.
+// Match on a "api key" PREFIX (not equality) since the plugin renders the
+// heading as the plural "API Keys", not "API Key".
 const hideMonetizationApiKeysPlugin: ZudokuPlugin = {
   getHead: () => (
     <script
@@ -64,12 +66,12 @@ const hideMonetizationApiKeysPlugin: ZudokuPlugin = {
       dangerouslySetInnerHTML={{
         __html: `
           (function () {
-            var HEADING_TEXT = "api key";
+            var HEADING_PREFIX = "api key";
             function hideApiKeyCards(root) {
               var candidates = (root || document).querySelectorAll("h1, h2, h3, h4, h5, h6");
               candidates.forEach(function (heading) {
                 var text = (heading.textContent || "").trim().toLowerCase();
-                if (text !== HEADING_TEXT) return;
+                if (text.indexOf(HEADING_PREFIX) !== 0) return;
                 var card = heading.closest("[class*='card' i]") || heading.parentElement;
                 if (card) {
                   card.style.display = "none";
