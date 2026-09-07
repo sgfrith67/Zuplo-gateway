@@ -53,12 +53,18 @@ const monetizationPlugins = [zuploMonetizationPlugin()]
 // config/routes.oas.json) — Zuplo API key consumers are no longer part of the
 // auth flow. `apiKeys: { enabled: false }` (below) removes Zudoku's built-in
 // API Keys page, but the monetization plugin still renders its own "API Keys"
-// block inside each subscription card on /pricing, and it has no config
+// card on both /pricing and the My Subscriptions page, and it has no config
 // option to suppress that. Since there's nothing left for that key to
 // authenticate, we hide the block client-side: a small observer watches for
-// the subscription card's API Key(s) heading and hides its containing card.
-// Match on a "api key" PREFIX (not equality) since the plugin renders the
-// heading as the plural "API Keys", not "API Key".
+// the subscription card's API Key(s) title and hides its containing card.
+//
+// The title is NOT always a semantic heading (h1-h6) — on the My Subscriptions
+// page the monetization plugin renders it as a plain styled <div>/<span>
+// (e.g. a shadcn-style CardTitle), so we can't rely on querying heading tags
+// alone. Instead we scan every element for one whose *own* direct text
+// (ignoring nested children) starts with "api key" and is short enough to be
+// a title rather than a paragraph — that reliably finds the title element
+// regardless of which tag the plugin uses for it.
 const hideMonetizationApiKeysPlugin: ZudokuPlugin = {
   getHead: () => (
     <script
@@ -66,13 +72,27 @@ const hideMonetizationApiKeysPlugin: ZudokuPlugin = {
       dangerouslySetInnerHTML={{
         __html: `
           (function () {
-            var HEADING_PREFIX = "api key";
+            var TITLE_PREFIX = "api key";
+            var MAX_TITLE_LENGTH = 30;
+
+            function ownText(el) {
+              var text = "";
+              for (var i = 0; i < el.childNodes.length; i++) {
+                var node = el.childNodes[i];
+                if (node.nodeType === 3) {
+                  text += node.textContent;
+                }
+              }
+              return text.trim();
+            }
+
             function hideApiKeyCards(root) {
-              var candidates = (root || document).querySelectorAll("h1, h2, h3, h4, h5, h6");
-              candidates.forEach(function (heading) {
-                var text = (heading.textContent || "").trim().toLowerCase();
-                if (text.indexOf(HEADING_PREFIX) !== 0) return;
-                var card = heading.closest("[class*='card' i]") || heading.parentElement;
+              var candidates = (root || document).querySelectorAll("h1, h2, h3, h4, h5, h6, div, span, p");
+              candidates.forEach(function (el) {
+                var text = ownText(el).toLowerCase();
+                if (!text || text.length > MAX_TITLE_LENGTH) return;
+                if (text.indexOf(TITLE_PREFIX) !== 0) return;
+                var card = el.closest("[class*='card' i]") || el.parentElement;
                 if (card) {
                   card.style.display = "none";
                 }
